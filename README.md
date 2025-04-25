@@ -1,3 +1,3 @@
 
 
-![Network topology](net-topo.png)
+![Network topology](net-topo.jpg)
