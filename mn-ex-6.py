@@ -31,14 +31,15 @@ class NetTopo(Topo):
                 sa = self.addHost('sa')
                 ra = self.addHost('ra')
                 rb = self.addHost('rb')
-                self.addLink(sa, ra, intfName1='sa-eth0', intfName2='ra-eth1')
-                self.addLink(cb, rb, intfName1='cb-eth0', intfName2='rb-eth1')
+		self.addLink(sa, ra, intfName1='sa-eth0', intfName2='ra-eth1')
+		self.addLink(cb, rb, intfName1='cb-eth0', intfName2='rb-eth1')
 
-                self.addLink(ra, r1, intfName1='ra-eth0', intfName2='r1-eth3')
-                self.addLink(ra, r2, intfName1='ra-eth2', intfName2='r2-eth3')
+		self.addLink(ra, r1, intfName1='ra-eth0', intfName2='r1-eth3')
+		self.addLink(ra, r2, intfName1='ra-eth2', intfName2='r2-eth3')
 
-                self.addLink(rb, r1, intfName1='rb-eth0', intfName2='r1-eth2')
-                self.addLink(rb, r2, intfName1='rb-eth2', intfName2='r2-eth2')
+		self.addLink(rb, r1, intfName1='rb-eth0', intfName2='r1-eth2')
+		self.addLink(rb, r2, intfName1='rb-eth2', intfName2='r2-eth2')
+
 
 def create_ip_net(net):
         print "create_ip_net"
@@ -49,22 +50,22 @@ def create_ip_net(net):
         net['r2'].cmdPrint("ifconfig r2-eth1 192.168.2.1/24")
         net['r2'].cmdPrint("ifconfig r2-eth0 10.0.0.2/30")
 
-        net['sa' ].cmdPrint("ifconfig sa-eth0 192.168.3.2/24")
-        net['cb' ].cmdPrint("ifconfig cb-eth0 192.168.4.2/24")
+	net['sa' ].cmdPrint("ifconfig sa-eth0 192.168.3.2/24")
+	net['cb' ].cmdPrint("ifconfig cb-eth0 192.168.4.2/24")
 
-        net['r1'].cmdPrint("ifconfig r1-eth2 10.0.0.17/30")
-        net['r1'].cmdPrint("ifconfig r1-eth3 10.0.0.5/30")
+	net['r1'].cmdPrint("ifconfig r1-eth2 10.0.0.17/30")
+	net['r1'].cmdPrint("ifconfig r1-eth3 10.0.0.5/30")
 
-        net['r2'].cmdPrint("ifconfig r2-eth2 10.0.0.13/30")
-        net['r2'].cmdPrint("ifconfig r2-eth3 10.0.0.10/30")
+	net['r2'].cmdPrint("ifconfig r2-eth2 10.0.0.13/30")
+	net['r2'].cmdPrint("ifconfig r2-eth3 10.0.0.10/30")
 
-        net['ra'].cmdPrint("ifconfig ra-eth0 10.0.0.6/30")
-        net['ra'].cmdPrint("ifconfig ra-eth1 192.168.3.1/24")
-        net['ra'].cmdPrint("ifconfig ra-eth2 10.0.0.9/30")
+	net['ra'].cmdPrint("ifconfig ra-eth0 10.0.0.6/30")
+	net['ra'].cmdPrint("ifconfig ra-eth1 192.168.3.1/24")
+	net['ra'].cmdPrint("ifconfig ra-eth2 10.0.0.9/30")
 
-        net['rb'].cmdPrint("ifconfig rb-eth0 10.0.0.18/30")
-        net['rb'].cmdPrint("ifconfig rb-eth1 192.168.4.1/24")
-        net['rb'].cmdPrint("ifconfig rb-eth2 10.0.0.14/30")
+	net['rb'].cmdPrint("ifconfig rb-eth0 10.0.0.18/30")
+	net['rb'].cmdPrint("ifconfig rb-eth1 192.168.4.1/24")
+	net['rb'].cmdPrint("ifconfig rb-eth2 10.0.0.14/30")
 
 
 def config_static_route(net):
@@ -87,6 +88,15 @@ def set_ospf_router(net, node):
         net[node].cmdPrint('chmod 666 /tmp/{}.vty'.format(node))
         net[node].cmdPrint('bgpd -f ./{}.bgp.conf -d -i /tmp/{}.bgp.pid -z /tmp/{}.vty '.format(node, node, node))
 
+def print_routing_tables(net, stimer):
+        for i in range(stimer):
+                os.system("echo '----------------------'")
+                os.system("echo 'PRINTING at {}s'".format(i))
+                net['r1'].cmdPrint('route')
+                net['r2'].cmdPrint('route')
+                net['ra'].cmdPrint('route')
+                net['rb'].cmdPrint('route')
+                os.system('sleep {}'.format(1))
 
 def net_test(net):
         print "Network connectivity"
@@ -101,7 +111,7 @@ def cleanup_quagga():
         os.system('rm /tmp/*.pid')
         os.system('rm /tmp/*.vty')
         os.system('pkill zebra')
-        os.system('pkill bgpd')
+        os.system('pkill ospfd')
 
 def run():
         cleanup_quagga()
@@ -129,5 +139,4 @@ def run():
 if __name__ == '__main__':
         setLogLevel( 'info' )
         run()
-
 
