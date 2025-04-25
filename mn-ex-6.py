@@ -101,7 +101,7 @@ def cleanup_quagga():
         os.system('rm /tmp/*.pid')
         os.system('rm /tmp/*.vty')
         os.system('pkill zebra')
-        os.system('pkill ospfd')
+        os.system('pkill bgpd')
 
 def run():
         cleanup_quagga()
